@@ -1,4 +1,4 @@
-"""Written by Eitan Kosman."""
+
 
 import logging
 import os
@@ -15,21 +15,12 @@ from utils.types import Device
 
 
 def get_torch_device() -> Device:
-    """
-    Retrieves the device to run torch models, with preferability to GPU (denoted as cuda by torch)
-    Returns: Device to run the models
-    """
+    
     return torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 
 def load_model(model_path: str) -> nn.Module:
-    """Loads a Pytorch model.
 
-    Args:
-        model_path: path to the model to load
-
-    Returns: a model loaded from the specified path
-    """
     logging.info(f"Load the model from: {model_path}")
     model = torch.load(model_path, map_location="cpu")
     logging.info(model)
@@ -37,8 +28,7 @@ def load_model(model_path: str) -> nn.Module:
 
 
 class TorchModel(nn.Module):
-    """Wrapper class for a torch model to make it comfortable to train and load
-    models."""
+   
 
     def __init__(self, model: nn.Module) -> None:
         super().__init__()
@@ -49,17 +39,11 @@ class TorchModel(nn.Module):
         self.callbacks = []
 
     def register_callback(self, callback_fn: Callback) -> None:
-        """
-        Register a callback to be called after each evaluation run
-        Args:
-            callback_fn: a callable that accepts 2 inputs (output, target)
-                            - output is the model's output
-                            - target is the values of the target variable
-        """
+       
         self.callbacks.append(callback_fn)
 
     def data_parallel(self):
-        """Transfers the model to data parallel mode."""
+       
         self.is_data_parallel = True
         if not isinstance(self.model, torch.nn.DataParallel):
             self.model = torch.nn.DataParallel(self.model, device_ids=[0, 1])
@@ -68,21 +52,11 @@ class TorchModel(nn.Module):
 
     @classmethod
     def load_model(cls, model_path: str):
-        """
-        Loads a pickled model
-        Args:
-            model_path: path to the pickled model
-
-        Returns: TorchModel class instance wrapping the provided model
-        """
+        
         return cls(load_model(model_path))
 
     def notify_callbacks(self, notification, *args, **kwargs) -> None:
-        """Calls all callbacks registered with this class.
-
-        Args:
-            notification: The type of notification to be called.
-        """
+       
         for callback in self.callbacks:
             try:
                 method = getattr(callback, notification)
@@ -103,20 +77,7 @@ class TorchModel(nn.Module):
         save_every: Optional[int] = None,
         evaluate_every: Optional[int] = None,
     ) -> None:
-        """
-
-        Args:
-            train_iter: iterator for training
-            criterion: loss function
-            optimizer: optimizer for the algorithm
-            eval_iter: iterator for evaluation
-            epochs: amount of epochs
-            network_model_path_base: where to save the models
-            save_every: saving model checkpoints every specified amount of epochs
-            evaluate_every: perform evaluation every specified amount of epochs.
-                            If the evaluation is expensive, you probably want to
-                            choose a high value for this
-        """
+       
         criterion = criterion.to(self.device)
         self.notify_callbacks("on_training_start", epochs)
 
@@ -148,12 +109,7 @@ class TorchModel(nn.Module):
             self.save(os.path.join(network_model_path_base, f"epoch_{epoch + 1}.pt"))
 
     def evaluate(self, criterion: nn.Module, data_iter: DataLoader) -> float:
-        """
-        Evaluates the model
-        Args:
-            criterion: Loss function for calculating the evaluation
-            data_iter: torch data iterator
-        """
+       
         self.eval()
         self.notify_callbacks("on_evaluation_start", len(data_iter))
         total_loss = 0
@@ -187,17 +143,7 @@ class TorchModel(nn.Module):
         data_iter: DataLoader,
         epoch: int,
     ) -> float:
-        """Perform a whole epoch.
-
-        Args:
-            criterion (nn.Module): Loss function to be used.
-            optimizer (Optimizer): Optimizer to use for minimizing the loss function.
-            data_iter (DataLoader): Loader for data samples used for training the model.
-            epoch (int): The epoch number.
-
-        Returns:
-            float: Average training loss calculated during the epoch.
-        """
+        
         total_loss = 0
         total_time = 0.0
         self.train()
@@ -239,12 +185,7 @@ class TorchModel(nn.Module):
     def data_to_device(
         self, data: Union[Tensor, List[Tensor]], device: Device
     ) -> Union[Tensor, List[Tensor]]:
-        """
-        Transfers a tensor data to a device
-        Args:
-            data: torch tensor
-            device: target device
-        """
+       
         if isinstance(data, list):
             data = [d.to(device) for d in data]
         elif isinstance(data, tuple):
@@ -255,13 +196,7 @@ class TorchModel(nn.Module):
         return data
 
     def save(self, model_path: str) -> None:
-        """Saves the model to the given path.
-
-        If currently using data parallel, the method
-        will save the original model and not the data parallel instance of it
-        Args:
-            model_path: target path to save the model to
-        """
+       
         if self.is_data_parallel:
             torch.save(self.model.module, model_path)
         else:
