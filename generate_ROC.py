@@ -17,8 +17,7 @@ from network.TorchUtils import TorchModel
 
 
 def get_args() -> argparse.Namespace:
-    """Reads command line args and returns the parser object the represent the
-    specified arguments."""
+   
     parser = argparse.ArgumentParser(
         description="Video Anomaly Detection Evaluation Parser"
     )

@@ -19,8 +19,7 @@ from utils.utils import build_transforms, register_logger
 
 
 def get_args() -> argparse.Namespace:
-    """Reads command line args and returns the parser object the represent the
-    specified arguments."""
+   
 
     parser = argparse.ArgumentParser(description="Video Feature Extraction Parser")
 
@@ -83,17 +82,7 @@ def get_args() -> argparse.Namespace:
 def to_segments(
     data: Union[Tensor, np.ndarray], n_segments: int = 32
 ) -> List[np.ndarray]:
-    """These code is taken from:
-
-        # https://github.com/rajanjitenpatel/C3D_feature_extraction/blob/b5894fa06d43aa62b3b64e85b07feb0853e7011a/extract_C3D_feature.py#L805
-
-    Args:
-        data (Union[Tensor, np.ndarray]): List of features of a certain video
-        n_segments (int, optional): Number of segments
-
-    Returns:
-        List[np.ndarray]: List of `num` segments
-    """
+  
     data = np.array(data)
     Segments_Features = []
     thirty2_shots = np.round(np.linspace(0, len(data) - 1, num=n_segments + 1)).astype(
@@ -114,7 +103,7 @@ def to_segments(
 
 
 class FeaturesWriter:
-    """Accumulates and saves extracted features."""
+    
 
     def __init__(self, num_videos: int, chunk_size: int = 16) -> None:
         self.path = ""
@@ -125,29 +114,18 @@ class FeaturesWriter:
         self.dump_count = 0
 
     def _init_video(self, video_name: str, dir: str) -> None:
-        """Initialize the state of the writer for a new video.
-
-        Args:
-            video_name (str): Name of the video to initialize for.
-            dir (str): Directory where the video is stored.
-        """
+       
         self.path = path.join(dir, f"{video_name}.txt")
         self.dir = dir
         self.data = {}
 
     def has_video(self) -> bool:
-        """Checks whether the writer is initialized with a video.
-
-        Returns:
-            bool
-        """
+       
+    
         return self.data is not None
 
     def dump(self, dir: str) -> None:
-        """Saves the accumulated features to disk.
-
-        The features will be segmented and normalized.
-        """
+       
         logging.info(f"{self.dump_count} / {self.num_videos}:	Dumping {self.path}")
         self.dump_count += 1
         self.dir = dir
@@ -166,16 +144,7 @@ class FeaturesWriter:
                 fp.write(" ".join(d_str) + "\n")
 
     def _is_new_video(self, video_name: str, dir: str) -> bool:
-        """Checks whether the given video is new or the writer is already
-        initialized with it.
-
-        Args:
-            video_name (str): Name of the possibly new video.
-            dir (str): Directory where the video is stored.
-
-        Returns:
-            bool
-        """
+       
         new_path = path.join(dir, f"{video_name}.txt")
         if self.path != new_path and self.path is not None:
             return True
@@ -183,12 +152,7 @@ class FeaturesWriter:
         return False
 
     def store(self, feature: Union[Tensor, np.ndarray], idx: int) -> None:
-        """Accumulate features.
-
-        Args:
-            feature (Union[Tensor, np.ndarray]): Features to be accumulated.
-            idx (int): Indices of features in the video.
-        """
+       
         self.data[idx] = list(feature)
 
     def write(
@@ -204,20 +168,7 @@ class FeaturesWriter:
 
 
 def read_features(file_path, cache: Optional[Dict[str, Tensor]] = None) -> Tensor:
-    """Reads features from file.
-
-    Args:
-        file_path (_type_): Path to a text file containing features. Each line should contain a feature
-            for a single video segment.
-        cache (Dict, optional): A cache that stores features that were already loaded.
-            If `None`, caching is disabled.Defaults to None.
-
-    Raises:
-        FileNotFoundError: The provided path does not exist.
-
-    Returns:
-        Tensor
-    """
+   
     if cache is not None and file_path in cache:
         return cache[file_path]
 

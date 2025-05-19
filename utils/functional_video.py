@@ -12,10 +12,7 @@ def _is_tensor_video_clip(clip):
 
 
 def crop(clip, i, j, h, w):
-    """
-    Args:
-        clip (torch.tensor): Video clip to be cropped. Size is (C, T, H, W)
-    """
+   
     assert len(clip.size()) == 4, "clip should be a 4D tensor"
     return clip[..., i : i + h, j : j + w]
 
@@ -29,18 +26,7 @@ def resize(clip, target_size, interpolation_mode):
 
 
 def resized_crop(clip, i, j, h, w, size, interpolation_mode="bilinear"):
-    """
-    Do spatial cropping and resizing to the video clip
-    Args:
-        clip (torch.tensor): Video clip to be cropped. Size is (C, T, H, W)
-        i (int): i in (i,j) i.e coordinates of the upper left corner.
-        j (int): j in (i,j) i.e coordinates of the upper left corner.
-        h (int): Height of the cropped region.
-        w (int): Width of the cropped region.
-        size (tuple(int, int)): height and width of resized clip
-    Returns:
-        clip (torch.tensor): Resized and cropped clip. Size is (C, T, H, W)
-    """
+  
     assert _is_tensor_video_clip(clip), "clip should be a 4D torch.tensor"
     clip = crop(clip, i, j, h, w)
     clip = resize(clip, size, interpolation_mode)
@@ -59,14 +45,7 @@ def center_crop(clip, crop_size):
 
 
 def to_tensor(clip):
-    """
-    Convert tensor data type from uint8 to float, divide value by 255.0 and
-    permute the dimenions of clip tensor
-    Args:
-        clip (torch.tensor, dtype=torch.uint8): Size is (T, H, W, C)
-    Return:
-        clip (torch.tensor, dtype=torch.float): Size is (C, T, H, W)
-    """
+   
     _is_tensor_video_clip(clip)
     if not clip.dtype == torch.uint8:
         raise TypeError(
@@ -76,14 +55,7 @@ def to_tensor(clip):
 
 
 def normalize(clip, mean, std, inplace=False):
-    """
-    Args:
-        clip (torch.tensor): Video clip to be normalized. Size is (C, T, H, W)
-        mean (tuple): pixel RGB mean. Size is (3)
-        std (tuple): pixel standard deviation. Size is (3)
-    Returns:
-        normalized clip (torch.tensor): Size is (C, T, H, W)
-    """
+    
     assert _is_tensor_video_clip(clip), "clip should be a 4D torch.tensor"
     if not inplace:
         clip = clip.clone()
@@ -94,11 +66,6 @@ def normalize(clip, mean, std, inplace=False):
 
 
 def hflip(clip):
-    """
-    Args:
-        clip (torch.tensor): Video clip to be normalized. Size is (C, T, H, W)
-    Returns:
-        flipped clip (torch.tensor): Size is (C, T, H, W)
-    """
+   
     assert _is_tensor_video_clip(clip), "clip should be a 4D torch.tensor"
     return clip.flip(-1)

@@ -43,13 +43,7 @@ class RandomResizedCropVideo(RandomResizedCrop):
         self.crop = crop
 
     def __call__(self, clip):
-        """
-        Args:
-            clip (torch.tensor): Video clip to be cropped. Size is (C, T, H, W)
-        Returns:
-            torch.tensor: randomly cropped/resized video clip.
-                size is (C, T, H, W)
-        """
+       
         clip = F.resize(clip, self.size, self.interpolation_mode)
         # print(clip.shape)
         if clip.shape[2] - self.crop > 0:
@@ -79,13 +73,7 @@ class CenterCropVideo:
             self.crop_size = crop_size
 
     def __call__(self, clip):
-        """
-        Args:
-            clip (torch.tensor): Video clip to be cropped. Size is (C, T, H, W)
-        Returns:
-            torch.tensor: central cropping of video clip. Size is
-            (C, T, crop_size, crop_size)
-        """
+        
         return F.center_crop(clip, self.crop_size)
 
     def __repr__(self):
@@ -93,13 +81,7 @@ class CenterCropVideo:
 
 
 class NormalizeVideo:
-    """
-    Normalize the video clip by mean subtraction and division by standard deviation
-    Args:
-        mean (3-tuple): pixel RGB mean
-        std (3-tuple): pixel RGB standard deviation
-        inplace (boolean): whether do in-place normalization
-    """
+   
 
     def __init__(self, mean, std, inplace=False):
         self.mean = mean
@@ -107,10 +89,7 @@ class NormalizeVideo:
         self.inplace = inplace
 
     def __call__(self, clip):
-        """
-        Args:
-            clip (torch.tensor): video clip to be normalized. Size is (C, T, H, W)
-        """
+       
         return F.normalize(clip, self.mean, self.std, self.inplace)
 
     def __repr__(self):
@@ -121,19 +100,13 @@ class NormalizeVideo:
 
 
 class ToTensorVideo:
-    """Convert tensor data type from uint8 to float, divide value by 255.0 and
-    permute the dimenions of clip tensor."""
+    
 
     def __init__(self):
         pass
 
     def __call__(self, clip):
-        """
-        Args:
-            clip (torch.tensor, dtype=torch.uint8): Size is (T, H, W, C)
-        Return:
-            clip (torch.tensor, dtype=torch.float): Size is (C, T, H, W)
-        """
+        
         return F.to_tensor(clip)
 
     def __repr__(self):
@@ -141,22 +114,12 @@ class ToTensorVideo:
 
 
 class RandomHorizontalFlipVideo:
-    """
-    Flip the video clip along the horizonal direction with a given probability
-    Args:
-        p (float): probability of the clip being flipped. Default value is 0.5
-    """
-
+   
     def __init__(self, p=0.5):
         self.p = p
 
     def __call__(self, clip):
-        """
-        Args:
-            clip (torch.tensor): Size is (C, T, H, W)
-        Return:
-            clip (torch.tensor): Size is (C, T, H, W)
-        """
+       
         if random.random() < self.p:
             clip = F.hflip(clip)
         return clip

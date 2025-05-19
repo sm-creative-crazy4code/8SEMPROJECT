@@ -79,21 +79,7 @@ def features_extraction(
     n_segments: int = 32,
     progress_bar=None,
 ) -> List[np.ndarray]:
-    """Extracts features of the video.The returned features will be returned
-    after averaging over the required number of video segments.
-
-    :param video_path: path of the video to predict
-    :param model: model to use for feature extraction
-    :param device: device to use for loading data
-    :param batch_size: batch size to use for loading data
-    :param frame_stride: interval between frames to load
-    :param clip_length: number of frames to use for loading each video
-        sample
-    :param n_segments: how many chunks the video should be divided into
-    :param progress_bar: TODO
-    :return: features list (n_segments, feature_dim), usually (32, 4096)
-        as in the original paper
-    """
+    
     data_loader = SingleVideoIter(
         clip_length=clip_length,
         frame_stride=frame_stride,
@@ -128,13 +114,7 @@ def features_extraction(
 
 
 def ad_prediction(model: AnomalyDetector, features: Tensor, device: Device) -> Tensor:
-    """Creates prediction for the given feature vectors.
-
-    :param model: model to use for anomaly detection
-    :param features: features of the video clips
-    :param device: device to use for loading the features
-    :return: anomaly predictions for the video segments
-    """
+   
     logging.info("Performing anomaly detection...")
     features = torch.tensor(features).to(device)  # pylint: disable=not-callable
     with torch.no_grad():
@@ -152,10 +132,7 @@ class MplCanvas(FigureCanvasQTAgg):
 
 
 class Window(QWidget):
-    """Anomaly detection gui Based on media player code from:
-
-    https://codeloop.org/python-how-to-create-media-player-in-pyqt5/
-    """
+    
 
     def __init__(self) -> None:
         super().__init__()

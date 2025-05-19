@@ -17,20 +17,7 @@ from utils.types import Device, FeatureExtractor
 def load_feature_extractor(
     features_method: str, feature_extractor_path: str, device: Device
 ) -> FeatureExtractor:
-    """Load feature extractor from given path.
-
-    Args:
-        features_method (str): The feature extractor model type to use. Either c3d | mfnet | r3d101 | r3d152.
-        feature_extractor_path (str): Path to the feature extractor model.
-        device (Union[torch.device, str]): Device to use for the model.
-
-    Raises:
-        FileNotFoundError: The path to the model does not exist.
-        NotImplementedError: The provided feature extractor method is not implemented.
-
-    Returns:
-        FeatureExtractor
-    """
+   
     if not path.exists(feature_extractor_path):
         raise FileNotFoundError(
             f"Couldn't find feature extractor {feature_extractor_path}.\n"
@@ -69,18 +56,7 @@ def load_feature_extractor(
 
 
 def load_anomaly_detector(ad_model_path: str, device: Device) -> AnomalyDetector:
-    """Load anomaly detection model from given path.
-
-    Args:
-        ad_model_path (str): Path to the anomaly detection model.
-        device (Device): Device to use for the model.
-
-    Raises:
-        FileNotFoundError: The path to the model does not exist.
-
-    Returns:
-        AnomalyDetector
-    """
+   
     if not path.exists(ad_model_path):
         raise FileNotFoundError(f"Couldn't find anomaly detector {ad_model_path}.")
     logging.info(f"Loading anomaly detector from {ad_model_path}")
@@ -95,18 +71,7 @@ def load_models(
     features_method: str = "c3d",
     device: Device = "cuda",
 ) -> Tuple[AnomalyDetector, FeatureExtractor]:
-    """Loads both feature extractor and anomaly detector from the given paths.
-
-    Args:
-        feature_extractor_path (str): Path of the features extractor weights to load.
-        ad_model_path (str): Path of the anomaly detector weights to load.
-        features_method (str, optional): Name of the model to use for features extraction.
-            Defaults to "c3d".
-        device (str, optional): Device to use for the models. Defaults to "cuda".
-
-    Returns:
-        Tuple[nn.Module, nn.Module]
-    """
+   
     feature_extractor = load_feature_extractor(
         features_method, feature_extractor_path, device
     )

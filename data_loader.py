@@ -12,7 +12,7 @@ from torchvision.datasets.video_utils import VideoClips
 
 
 class VideoIter(data.Dataset):
-    """This class implements a loader for videos."""
+ 
 
     def __init__(
         self,
@@ -42,21 +42,13 @@ class VideoIter(data.Dataset):
 
     @property
     def video_count(self) -> int:
-        """Retrieve the number of the videos in the dataset."""
+    
         return len(self.video_list)
 
     def getitem_from_raw_video(
         self, idx: int
     ) -> Union[Tuple[Tensor, int, str, str], Tuple[Tensor, int, int, str, str]]:
-        """Fetch a sample from the dataset.
-
-        Args:
-            idx (int): Index of the sample the retrieve.
-
-        Returns:
-            Tuple[Tensor, int, str, str]: Video clip, clip idx in the video, directory name, and file
-            Tuple[Tensor, int, int, str, str]: Video clip, label, clip idx in the video, directory name, and file
-        """
+       
         video, _, _, _ = self.video_clips.get_clip(idx)
         video_idx, clip_idx = self.video_clips.get_clip_location(idx)
         video_path = self.video_clips.video_paths[video_idx]
@@ -100,17 +92,8 @@ class VideoIter(data.Dataset):
         return batch
 
     def _get_video_list(self, dataset_path: str) -> List[str]:
-        """Fetche all videos in a directory and sub-directories.
-
-        Args:
-            dataset_path (str): A string that represents the directory of the dataset.
-
-        Raises:
-            FileNotFoundError: The directory could not be found in the provided path.
-
-        Returns:
-            List[str]
-        """
+       
+        
         if not os.path.exists(dataset_path):
             raise FileNotFoundError(f"VideoIter:: failed to locate: `{dataset_path}'")
 
@@ -126,7 +109,7 @@ class VideoIter(data.Dataset):
 
 
 class SingleVideoIter(VideoIter):
-    """Loader for a single video."""
+   
 
     def __init__(
         self,

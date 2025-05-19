@@ -19,8 +19,7 @@ from utils.utils import register_logger
 
 
 def get_args() -> argparse.Namespace:
-    """Reads command line args and returns the parser object the represent the
-    specified arguments."""
+   
     parser = argparse.ArgumentParser(
         description="Video Anomaly Detection Training Parser"
     )
@@ -102,11 +101,7 @@ if __name__ == "__main__":
 
     model = model.to(device).train()
     # Training parameters
-    """
-    In the original paper:
-        lr = 0.01
-        epsilon = 1e-8
-    """
+   
     optimizer = torch.optim.Adadelta(model.parameters(), lr=args.lr_base, eps=1e-8)
 
     criterion = RegularizedLoss(model.get_model(), custom_objective).to(device)
