@@ -21,8 +21,7 @@ class AnomalyDetector(nn.Module):
         self.fc3 = nn.Linear(32, 1)
         self.sig = nn.Sigmoid()
 
-        # In the original keras code they use "glorot_normal"
-        # As I understand, this is the same as xavier normal in Pytorch
+       
         nn.init.xavier_normal_(self.fc1.weight)
         nn.init.xavier_normal_(self.fc2.weight)
         nn.init.xavier_normal_(self.fc3.weight)
@@ -31,7 +30,7 @@ class AnomalyDetector(nn.Module):
     def input_dim(self) -> int:
         return self.fc1.weight.shape[1]
 
-    def forward(self, x: Tensor) -> Tensor:  # pylint: disable=arguments-differ
+    def forward(self, x: Tensor) -> Tensor: 
         x = self.dropout1(self.relu1(self.fc1(x)))
         x = self.dropout2(self.fc2(x))
         x = self.sig(self.fc3(x))
@@ -39,15 +38,7 @@ class AnomalyDetector(nn.Module):
 
 
 def custom_objective(y_pred: Tensor, y_true: Tensor) -> Tensor:
-    """Calculate loss function with regularization for anomaly detection.
-
-    Args:
-        y_pred (Tensor): A tensor containing the predictions of the model.
-        y_true (Tensor): A tensor containing the ground truth.
-
-    Returns:
-        Tensor: A single dimension tensor containing the calculated loss.
-    """
+   
     # y_pred (batch_size, 32, 1)
     # y_true (batch_size)
     lambdas = 8e-5
@@ -69,7 +60,6 @@ def custom_objective(y_pred: Tensor, y_true: Tensor) -> Tensor:
     smoothed_scores = anomal_segments_scores[:, 1:] - anomal_segments_scores[:, :-1]
     smoothed_scores_sum_squared = smoothed_scores.pow(2).sum(dim=-1)
 
-    # Sparsity of anomalous video
     sparsity_loss = anomal_segments_scores.sum(dim=-1)
 
     final_loss = (
@@ -79,8 +69,7 @@ def custom_objective(y_pred: Tensor, y_true: Tensor) -> Tensor:
 
 
 class RegularizedLoss(torch.nn.Module):
-    """Regularizes a loss function."""
-
+   
     def __init__(
         self,
         model: AnomalyDetector,
@@ -94,7 +83,6 @@ class RegularizedLoss(torch.nn.Module):
 
     def forward(self, y_pred: Tensor, y_true: Tensor):  # pylint: disable=arguments-differ
         # loss
-        # Our loss is defined with respect to l2 regularization, as used in the original keras code
         fc1_params = torch.cat(tuple([x.view(-1) for x in self.model.fc1.parameters()]))
         fc2_params = torch.cat(tuple([x.view(-1) for x in self.model.fc2.parameters()]))
         fc3_params = torch.cat(tuple([x.view(-1) for x in self.model.fc3.parameters()]))
